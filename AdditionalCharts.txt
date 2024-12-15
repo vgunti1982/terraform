@@ -1,0 +1,58 @@
+#LAB 3c - ADDTIONAL CHARTS TO ADD TO THE OVERVIEW DASHBOARD 
+#COPY THESE CHARTS TO YOUR FILE - main.tf
+#REPLACE XXX WITH YOUR INITIALS TO MAKE THIS UNIQUE IN THE USER INTERFACE    
+resource "signalfx_list_chart" "tfchart_08" {
+    name = "XXX_TF_p99 Latency By Service"
+    program_text = <<-EOF
+        data("dem_latency").percentile(99,by="dem_service").publish(label= "latency_by_service")
+        EOF
+    legend_options_fields {
+    property = "dem_service"
+    enabled  = true
+    }
+    legend_options_fields {
+    property = "sf_metric"
+    enabled  = false
+    }
+    legend_options_fields {
+    property = "sf_originatingMetric"
+    enabled  = false
+    } 
+}
+
+#REPLACE XXX WITH YOUR INITIALS TO MAKE THIS UNIQUE IN THE USER INTERFACE
+resource "signalfx_list_chart" "tfchart_09" {
+    name = "XXX_TF_Number of API Calls by service"
+    program_text = <<-EOF
+        data("dem_numcalls", rollup="sum").sum(by="dem_service").publish(label= "APICalls_by_service")
+        EOF
+    legend_options_fields {
+    property = "dem_service"
+    enabled  = true
+    }
+    legend_options_fields {
+    property = "sf_metric"
+    enabled  = false
+    }
+    legend_options_fields {
+    property = "sf_originatingMetric"
+    enabled  = false
+    } 
+}
+
+#LAB 3C :ADDING ADDITIONAL CHARTS TO OVERVIEW DASHBOARD
+#ADD THIS CODE TO YOUR main.tf TO THE OVERVIEW DASHBOARD RESOURCE
+  chart {
+    chart_id = signalfx_list_chart.tfchart_08.id
+    width    = 3
+    height   = 1
+    column = 0
+    row=2
+  }
+  chart {
+    chart_id = signalfx_list_chart.tfchart_09.id
+    column = 0
+    width    = 3
+    height   = 1
+    row=3
+  }
